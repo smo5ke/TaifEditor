@@ -118,16 +118,16 @@ QVector<Token> Lexer::tokenize(const QString& text) {
         QChar currentChar = text[pos];
 
         if (currentChar.isSpace()) {
-            while (pos < text.length() && text[pos].isSpace()) pos++;
+            while (pos < text.length() and text[pos].isSpace()) pos++;
         }
         else if (currentChar.isDigit()) {
             int start = pos;
-            while (pos < text.length() && (text[pos].isDigit() or text[pos] == '.')) pos++;
+            while (pos < text.length() and (text[pos].isDigit() or text[pos] == '.')) pos++;
             tokens.append(Token(TokenType::Number, start, pos - start, text.mid(start, pos - start)));
         }
         else if (currentChar.isLetter() or currentChar == '_') {
             int start = pos;
-            while (pos < text.length() && (text[pos].isLetterOrNumber() or text[pos] == '_')) pos++;
+            while (pos < text.length() and (text[pos].isLetterOrNumber() or text[pos] == '_')) pos++;
 
             // Normalize identifier for consistent comparisons (helps مع الهمزات/تشكيل إذا احتجت لاحقًا)
             QString identifier = text.mid(start, pos - start).normalized(QString::NormalizationForm_KC);
@@ -142,7 +142,7 @@ QVector<Token> Lexer::tokenize(const QString& text) {
             int stringStart = pos;
             quoteCount++;
             // detect f-string marker 'م' before quote (exactly as in JSON delims)
-            bool startsWithM = (stringStart > 0 && text[stringStart - 1] == QChar(u'م'));
+            bool startsWithM = (stringStart > 0 and text[stringStart - 1] == QChar(u'م'));
             if (startsWithM) isFString = true;
 
             QChar delim = currentChar;
@@ -157,7 +157,7 @@ QVector<Token> Lexer::tokenize(const QString& text) {
                     pos++; // skip closing quote
                     break;
                 }
-                else if (isFString && text[pos] == '{') {
+                else if (isFString and text[pos] == '{') {
                     // Push string part up to the '{'
                     if (stringStart < pos) {
                         tokens.append(Token(TokenType::String, stringStart, pos - stringStart, text.mid(stringStart, pos - stringStart)));
@@ -166,7 +166,7 @@ QVector<Token> Lexer::tokenize(const QString& text) {
                     // Now parse the expression inside braces *without* recursive tokenize()
                     int exprStart = pos;
                     int braceDepth = 1;
-                    while (pos < text.length() && braceDepth > 0) {
+                    while (pos < text.length() and braceDepth > 0) {
                         if (text[pos] == '\\') pos += 2;
                         else if (text[pos] == '{') { braceDepth++; pos++; }
                         else if (text[pos] == '}') { braceDepth--; if (braceDepth==0) break; pos++; }
@@ -176,7 +176,7 @@ QVector<Token> Lexer::tokenize(const QString& text) {
                     if (exprStart < pos) {
                         tokens.append(Token(TokenType::Identifier, exprStart, pos - exprStart, text.mid(exprStart, pos - exprStart)));
                     }
-                    if (pos < text.length() && text[pos] == '}') pos++; // skip final '}'
+                    if (pos < text.length() and text[pos] == '}') pos++; // skip final '}'
                     stringStart = pos; // continue string after interpolation
                 }
                 else {
@@ -194,7 +194,7 @@ QVector<Token> Lexer::tokenize(const QString& text) {
         }
         else if (currentChar == '#') {
             int start = pos;
-            while (pos < text.length() && text[pos] != '\n') pos++;
+            while (pos < text.length() and text[pos] != '\n') pos++;
             tokens.append(Token(TokenType::Comment, start, pos - start, text.mid(start, pos - start)));
         }
         else if (QString("+-*/\\=<>!&|%^~:;(),.[]{}").contains(currentChar)) {
@@ -205,10 +205,10 @@ QVector<Token> Lexer::tokenize(const QString& text) {
             // Check two-char ops
             if (pos < text.length()) {
                 QChar nextChar = text[pos];
-                if ((currentChar == '=' && nextChar == '=') or
-                    (currentChar == '!' && nextChar == '=') or
-                    (currentChar == '<' && nextChar == '=') or
-                    (currentChar == '>' && nextChar == '=')) {
+                if ((currentChar == '=' and nextChar == '=') or
+                    (currentChar == '!' and nextChar == '=') or
+                    (currentChar == '<' and nextChar == '=') or
+                    (currentChar == '>' and nextChar == '=')) {
                     op += nextChar;
                     pos++;
                 }
