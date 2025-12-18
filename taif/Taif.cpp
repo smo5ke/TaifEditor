@@ -141,6 +141,7 @@ Taif::Taif(const QString& filePath, QWidget *parent)
     // ===================================================================
 
     cursorPositionLabel = new QLabel(this);
+    cursorPositionLabel->setStyleSheet("QLabel{ color: white }");
     cursorPositionLabel->setText("UTF-8  السطر: 1  العمود: 1");
     statusBar()->addPermanentWidget(cursorPositionLabel);
 
