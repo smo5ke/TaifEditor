@@ -49,7 +49,7 @@ void THighlighter::loadSyntaxDefinition(const QString &filePath)
 
 void THighlighter::highlightBlock(const QString &text)
 {
-    QVector<Token> tokens = m_lexer.tokenize(text);
+    QVector<Token> tokens = m_lexer.tokenize(text, 0);
     for (const auto& token : tokens) {
         QString styleName;
 

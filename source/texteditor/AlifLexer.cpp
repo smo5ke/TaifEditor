@@ -107,12 +107,9 @@
 // 	return tokens;
 // }
 
-QVector<Token> Lexer::tokenize(const QString& text) {
+QVector<Token> Lexer::tokenize(const QString& text, int oldPos) {
     // Reset state on each tokenization call
-    pos = 0;
-    tokens.clear();
-    quoteCount = 0;
-    isFString = false;
+    pos = oldPos;
 
     while (pos < text.length()) {
         QChar currentChar = text[pos];
@@ -141,9 +138,9 @@ QVector<Token> Lexer::tokenize(const QString& text) {
         else if (currentChar == '"' or currentChar == '\'') {
             int stringStart = pos;
             quoteCount++;
-            // detect f-string marker 'م' before quote (exactly as in JSON delims)
-            bool startsWithM = (stringStart > 0 and text[stringStart - 1] == QChar(u'م'));
-            if (startsWithM) isFString = true;
+
+            // Check if the string is an f-string (starts with u'م')
+            isFString += (stringStart > 0 and text[stringStart - 1] == u'م');
 
             QChar delim = currentChar;
             pos++; // skip opening quote
@@ -162,21 +159,9 @@ QVector<Token> Lexer::tokenize(const QString& text) {
                     if (stringStart < pos) {
                         tokens.append(Token(TokenType::String, stringStart, pos - stringStart, text.mid(stringStart, pos - stringStart)));
                     }
-                    pos++; // skip '{'
-                    // Now parse the expression inside braces *without* recursive tokenize()
-                    int exprStart = pos;
-                    int braceDepth = 1;
-                    while (pos < text.length() and braceDepth > 0) {
-                        if (text[pos] == '\\') pos += 2;
-                        else if (text[pos] == '{') { braceDepth++; pos++; }
-                        else if (text[pos] == '}') { braceDepth--; if (braceDepth==0) break; pos++; }
-                        else pos++;
-                    }
-                    // add the interpolation expression as Identifier/other tokens or as String Substitution
-                    if (exprStart < pos) {
-                        tokens.append(Token(TokenType::Identifier, exprStart, pos - exprStart, text.mid(exprStart, pos - exprStart)));
-                    }
-                    if (pos < text.length() and text[pos] == '}') pos++; // skip final '}'
+
+                    this->tokenize(text, pos);
+
                     stringStart = pos; // continue string after interpolation
                 }
                 else {
@@ -197,7 +182,13 @@ QVector<Token> Lexer::tokenize(const QString& text) {
             while (pos < text.length() and text[pos] != '\n') pos++;
             tokens.append(Token(TokenType::Comment, start, pos - start, text.mid(start, pos - start)));
         }
-        else if (QString("+-*/\\=<>!&|%^~:;(),.[]{}").contains(currentChar)) {
+        else if(isFString and currentChar == '}') {
+            int start = pos;
+            pos++;
+            tokens.append(Token(TokenType::Operator, start, pos - start, currentChar));
+            break;
+        }
+        else if (QString("+-*/\\=<>!&|%^~:;؛(),.[]{}").contains(currentChar)) {
             int start = pos;
             QString op;
             op += currentChar;
@@ -238,7 +229,7 @@ bool Lexer::isKeyword(const QString& word) {
 
 bool Lexer::isBiltinK(const QString& word) {
 	static const QSet<QString> keywords = {
-        "اطبع", "ادخل", "مدى", "تحقق_اي", "طول", "عشري", "صحيح", "مترابطة", "منطق", "مصفوفة"
+        "اطبع", "ادخل", "مدى", "تحقق_اي", "طول", "عشري", "صحيح", "مترابطة", "منطق", "مصفوفة", "فهرس"
 	};
 	return keywords.contains(word);
 }
