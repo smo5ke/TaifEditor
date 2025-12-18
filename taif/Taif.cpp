@@ -971,7 +971,7 @@ void Taif::runAlif() {
     if (QFile::exists(localAlif)) {
         program = localAlif;
     } else {
-        program = "C:/alif/alif.exe";
+        program = "alif/alif.exe";
     }
 #elif defined(Q_OS_LINUX) || defined(Q_OS_MACOS)
     program = QDir(appDir).filePath("alif/alif");
