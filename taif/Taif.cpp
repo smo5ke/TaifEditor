@@ -166,6 +166,7 @@ Taif::Taif(const QString& filePath, QWidget *parent)
     connect(tabWidget, &QTabWidget::currentChanged, this, &Taif::updateWindowTitle);
     connect(tabWidget, &QTabWidget::currentChanged, this, &Taif::onCurrentTabChanged);
     connect(searchBar, &SearchPanel::findNext, this, &Taif::findNextText);
+    connect(searchBar, &SearchPanel::findText, this, &Taif::findText);
     connect(searchBar, &SearchPanel::findPrevious, this, &Taif::findPrevText);
     connect(searchBar, &SearchPanel::closed, this, &Taif::hideFindBar);
     onCurrentTabChanged();
@@ -479,6 +480,26 @@ void Taif::hideFindBar() {
     searchBar->hide();
     if (TEditor* editor = currentEditor()) {
         editor->setFocus();
+    }
+}
+
+void Taif::findText() {
+    TEditor* editor = currentEditor();
+    if (!editor) return;
+
+    QString text = searchBar->getText();
+    if (text.isEmpty()) return;
+
+    QTextDocument::FindFlags flags;
+    if (searchBar->isCaseSensitive()) flags |= QTextDocument::FindCaseSensitively;
+
+    // البحث للأمام
+    editor->moveCursor(QTextCursor::Start);
+    bool found = editor->find(text, flags);
+
+    if (!found) {
+        // يمكن إضافة وميض أحمر أو صوت هنا ليدل على عدم العثور
+        QApplication::beep();
     }
 }
 

@@ -50,6 +50,7 @@ SearchPanel::SearchPanel(QWidget *parent) : QWidget(parent) {
 
     // البحث عند الضغط على Enter في مربع النص
     connect(searchInput, &QLineEdit::returnPressed, this, &SearchPanel::findNext);
+    connect(searchInput, &QLineEdit::textChanged, this, &SearchPanel::findText);
 }
 
 QString SearchPanel::getText() const { return searchInput->text(); }
