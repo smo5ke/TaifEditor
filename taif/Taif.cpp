@@ -68,18 +68,18 @@ Taif::Taif(const QString& filePath, QWidget *parent)
     QToolBar *mainToolBar = new QToolBar("Main Toolbar", this);
     mainToolBar->setObjectName("mainToolBar");
     mainToolBar->setMovable(false);
-    mainToolBar->setIconSize(QSize(30, 30));
+    mainToolBar->setIconSize(QSize(25, 25));
     mainToolBar->setStyleSheet("QToolButton:hover {background-color: #334466;}");
     this->addToolBar(Qt::RightToolBarArea, mainToolBar);
 
     toggleSidebarAction = new QAction(this);
-    toggleSidebarAction->setIcon(QIcon(":/icons/resources/side-bar.png"));
+    toggleSidebarAction->setIcon(QIcon(":/icons/resources/panel-right-open.svg"));
     toggleSidebarAction->setCheckable(true);
     toggleSidebarAction->setChecked(false);
     mainToolBar->addAction(toggleSidebarAction);
 
     QAction *runToolbarAction = new QAction(this);
-    runToolbarAction->setIcon(QIcon(":/icons/resources/run.png"));
+    runToolbarAction->setIcon(QIcon(":/icons/resources/run.svg"));
     runToolbarAction->setToolTip("تشغيل الملف الحالي");
 
     mainToolBar->addAction(runToolbarAction);
@@ -308,7 +308,7 @@ Taif::Taif(const QString& filePath, QWidget *parent)
             background: #3e3e42;
         }
         QTabWidget#MainTabs QTabBar::close-button {
-            image: url(:/icons/resources/close.png);
+            image: url(:/icons/resources/close.svg);
             background: transparent;
             border: none;
             subcontrol-position: right;
@@ -384,7 +384,7 @@ Taif::Taif(const QString& filePath, QWidget *parent)
         background: #3e3e42;
     }
     QTabWidget#MainTabs QTabBar::close-button {
-            image: url(:/icons/resources/close.png);
+            image: url(:/icons/resources/close.svg);
             background: transparent;
             border: none;
             subcontrol-position: right;
