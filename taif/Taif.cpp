@@ -91,6 +91,7 @@ Taif::Taif(const QString& filePath, QWidget *parent)
     // ===================================================================
     fileTreeView->setModel(fileSystemModel);
     fileTreeView->header()->setVisible(false);
+    fileTreeView->setStyleSheet("QTreeView { background: #03091A; } ");
     fileTreeView->hideColumn(1);
     fileTreeView->hideColumn(2);
     fileTreeView->hideColumn(3);
