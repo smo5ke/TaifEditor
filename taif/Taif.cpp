@@ -688,6 +688,7 @@ void Taif::openFile(QString filePath) {
             QFileInfo fileInfo(filePath);
             tabWidget->addTab(newEditor, fileInfo.fileName());
             tabWidget->setCurrentWidget(newEditor);
+            tabWidget->setTabToolTip(tabWidget->currentIndex(), filePath);
             updateWindowTitle();
 
 
@@ -1137,7 +1138,7 @@ void Taif::aboutTaif() {
 
 void Taif::updateWindowTitle() {
     TEditor* editor = currentEditor();
-    QString title;
+    QString title{};
 
     if (!editor) {
         title = "طيف";
