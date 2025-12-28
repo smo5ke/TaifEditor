@@ -299,17 +299,15 @@ Taif::Taif(const QString& filePath, QWidget *parent)
             padding: 0px 0px;
             border: none;
             border-top: 1px solid #444444;
-            border-top-left-radius: 8px;
-            border-top-right-radius: 8px;
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
         }
        QTabWidget#MainTabs QTabBar::tab:selected {
             background: #1e1e1e;
             color: #ffffff;
-            border-top: 2px solid #007acc;
-            border-left: 1px solid #007acc;
-            border-right: 1px solid #007acc;
-            border-top-left-radius: 8px;
-            border-top-right-radius: 8px;
+            border-top: 1px solid #007acc;
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
         }
         QTabWidget#MainTabs QTabBar::tab:hover:!selected {
             background: #3e3e42;
@@ -377,15 +375,13 @@ Taif::Taif(const QString& filePath, QWidget *parent)
         padding: 0px 8px;
         border: none;
         border-top: 1px solid #444444;
-        border-top-left-radius: 6px;
-        border-top-right-radius: 6px;
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
     }
     QTabWidget#MainTabs QTabBar::tab:selected {
         background: #1e1e1e;
         color: #ffffff;
-        border-top: 2px solid #007acc;
-        border-left: 1px solid #007acc;
-        border-right: 1px solid #007acc;
+        border-top: 1px solid #007acc;
     }
     QTabWidget#MainTabs QTabBar::tab:hover:!selected {
         background: #3e3e42;
