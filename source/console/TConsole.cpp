@@ -65,15 +65,17 @@ void TConsole::startCmd()
 
 #if defined(Q_OS_WIN)
     m_process->start("cmd.exe");
-
-#elif defined(Q_OS_LINUX) || defined(Q_OS_MACOS)
-    QStringList args;
-    args << "-c" << "import pty; pty.spawn('/bin/bash')";
-
+#elif defined(Q_OS_MACOS)
+    QStringList args{};
+    args << "-i" << "-l"; // mean (interactive)
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-    env.insert("TERM", "xterm-256color");
+    env.insert("PROMPT_EOL_MARK", ""); // لإزاله علامة "٪" من نهاية السطر الجديد في الطرفية
     m_process->setProcessEnvironment(env);
-    m_process->start("python3", args);
+    m_process->start("zsh", args);
+#elif defined(Q_OS_LINUX)
+    QStringList args{};
+    args << "-q" << "-c" << "bash" << "/dev/null"; // mean (interactive)
+    m_process->start("script", args);
 #endif
 }
 
