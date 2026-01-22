@@ -19,13 +19,13 @@ INCLUDEPATH +=  ../source/texteditor \
                 ../source/settings  \
 
 SOURCES += \
+    ../source/texteditor/TLexer.cpp \
+    ../source/texteditor/TSyntaxDefinition.cpp \
+    ../source/texteditor/TSyntaxHighlighter.cpp \
     Taif.cpp \
     main.cpp \
-    ../source/texteditor/SyntaxDefinition.cpp \
     ../source/texteditor/AlifComplete.cpp \
-    ../source/texteditor/AlifLexer.cpp \
     ../source/texteditor/TEditor.cpp \
-    ../source/texteditor/THighlighter.cpp \
     ../source/components/TFlatButton.cpp \
     ../source/components/TSearchPanel.cpp \
     ../source/console/TConsole.cpp \
@@ -35,12 +35,14 @@ SOURCES += \
     ../source/settings/TSettings.cpp   \
 
 HEADERS += \
+    ../source/texteditor/TLexer.h \
+    ../source/texteditor/TSyntaxDefinition.h \
+    ../source/texteditor/TSyntaxHighlighter.h \
+    ../source/texteditor/TSyntaxThemes.h \
+    ../source/texteditor/TToken.h \
     Taif.h  \
-    ../source/texteditor/SyntaxDefinition.h \
     ../source/texteditor/AlifComplete.h \
-    ../source/texteditor/AlifLexer.h \
     ../source/texteditor/TEditor.h \
-    ../source/texteditor/THighlighter.h \
     ../source/components/TFlatButton.h \
     ../source/components/TSearchPanel.h \
     ../source/console/TConsole.h \

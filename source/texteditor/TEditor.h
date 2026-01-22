@@ -3,7 +3,8 @@
 #include <QTimer>
 #include <QScrollBar>
 
-#include "THighlighter.h"
+#include "TSettings.h"
+#include "TSyntaxHighlighter.h"
 #include "AlifComplete.h"
 
 
@@ -32,7 +33,7 @@ class TEditor : public QPlainTextEdit {
     Q_OBJECT
 
 public:
-    TEditor(QWidget* parent = nullptr);
+    TEditor(TSettings* setting = nullptr, QWidget* parent = nullptr);
 
     void lineNumberAreaPaintEvent(QPaintEvent* event);
     int lineNumberAreaWidth() const;
@@ -54,6 +55,7 @@ public slots:
     void moveLineUp();
     void moveLineDown();
     void performAutoSave();
+    void updateHighlighterTheme(std::shared_ptr<SyntaxTheme>);
 
 protected:
     void resizeEvent(QResizeEvent* event) override;
@@ -66,7 +68,7 @@ protected:
     void contextMenuEvent(QContextMenuEvent *event) override;
 
 private:
-    THighlighter* highlighter{};
+    TSyntaxHighlighter* highlighter{};
     AutoComplete* autoComplete{};
     LineNumberArea* lineNumberArea{};
 

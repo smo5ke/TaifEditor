@@ -2,7 +2,6 @@
 
 #include "TEditor.h"
 #include "TMenu.h"
-#include "TSettings.h"
 #include "TSearchPanel.h"
 #include "ProcessWorker.h"
 
@@ -65,7 +64,7 @@ private:
 private:
     QTabWidget *tabWidget{};
     TMenuBar* menuBar{};
-    TSettings* settings{};
+    TSettings* setting{};
     QAction *toggleSidebarAction{};
     QString folderPath{};
     QAbstractItemModel* model{};

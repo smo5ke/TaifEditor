@@ -45,6 +45,8 @@ void TSettings::closeEvent(QCloseEvent* event) {
     QSettings settings("Alif", "Taif");
     settings.setValue("editorFontSize", fontSpin->value());
     settings.setValue("editorFontType", fontCombo->currentText());
+    settings.setValue("editorCodeTheme", themeCombo->currentIndex());
+    settings.sync();
 
     // emit windowClosed();
     // event->accept();
@@ -141,9 +143,7 @@ void TSettings::createAppearancePage(QVBoxLayout* layout) {
         fontCombo->addItem(family);
     }
     QString savedFont = settingsVal.value("editorFontType").toString();
-    qDebug() << savedFont;
     !savedFont.isEmpty() ? fontCombo->setCurrentText(savedFont) : fontCombo->setCurrentText("Noto Kufi Arabic");
-
 
     fontFamilyLayout->addRow("نوع الخط: ", fontCombo);
     connect(fontCombo, &QComboBox::currentTextChanged, this, &TSettings::fontTypeChanged);
@@ -158,12 +158,22 @@ void TSettings::createAppearancePage(QVBoxLayout* layout) {
     QVBoxLayout* themeLayout = new QVBoxLayout(themeGroup);
     QFormLayout* comboLayout = new QFormLayout();
 
-    QComboBox* themeCombo = new QComboBox();
+    themeCombo = new QComboBox();
     themeCombo->setInsertPolicy(QComboBox::NoInsert);
     themeCombo->setMinimumHeight(40);
-    themeCombo->setMaximumWidth(200);
+    themeCombo->setMaximumWidth(250);
+
+    setThemes();
+    // Populate UI
+    for (const auto& theme : availableThemes) {
+        themeCombo->addItem(theme->name());
+    }
+
+    int savedTheme = settingsVal.value("editorCodeTheme").toInt();
+    savedTheme ? themeCombo->setCurrentIndex(savedTheme) : themeCombo->setCurrentIndex(0);
 
     comboLayout->addRow("مظهر الشيفرة: ", themeCombo);
+    connect(themeCombo, &QComboBox::currentIndexChanged, this, &TSettings::highlighterThemeChanged);
 
     themeLayout->addLayout(comboLayout);
 
@@ -171,5 +181,20 @@ void TSettings::createAppearancePage(QVBoxLayout* layout) {
 
 
     layout->addWidget(fontGroup);
-    // layout->addWidget(themeGroup);
+    layout->addWidget(themeGroup);
+}
+
+QComboBox *TSettings::getThemeCombo() const {
+    return themeCombo;
+}
+
+void TSettings::setThemes() {
+    availableThemes.append(std::make_shared<VSCodeDarkTheme>());
+    availableThemes.append(std::make_shared<MonokaiTheme>());
+    availableThemes.append(std::make_shared<OceanicTheme>());
+    availableThemes.append(std::make_shared<TaifGlowTheme>());
+}
+
+QVector<std::shared_ptr<SyntaxTheme>> TSettings::getAvailableThemes() const {
+    return availableThemes;
 }

@@ -1,6 +1,6 @@
 #include "TFlatButton.h"
+#include "TSyntaxThemes.h"
 
-#include <QMainWindow>
 #include <QWidget>
 #include <QPushButton>
 #include <QVBoxLayout>
@@ -20,14 +20,20 @@ class TSettings : public QWidget {
 public:
     explicit TSettings(QWidget* parent = nullptr);
 
+    QVector<std::shared_ptr<SyntaxTheme>> getAvailableThemes() const;
+
+    // TODO: add getFontCombo() and getFontSpin() to use it to save the settings values
+    // instade of using the editor current values to save the values
+    QComboBox *getThemeCombo() const;
+    void setThemes();
+
 protected:
     void closeEvent(QCloseEvent* event) override;
 
 signals:
     void fontSizeChanged(int size);
     void fontTypeChanged(QString font);
-    // void settingsChanged();
-    // void windowClosed();
+    void highlighterThemeChanged(int themeIdx);
 
 
 private:
@@ -41,4 +47,7 @@ private:
 
     QSpinBox* fontSpin{};
     QComboBox* fontCombo{};
+    QComboBox* themeCombo{};
+
+    QVector<std::shared_ptr<SyntaxTheme>> availableThemes{};
 };

@@ -1,5 +1,4 @@
 #include "TEditor.h"
-#include "THighlighter.h"
 
 #include <QPainter>
 #include <QTextBlock>
@@ -104,7 +103,7 @@
 
 
 
-TEditor::TEditor(QWidget* parent) {
+TEditor::TEditor(TSettings* setting, QWidget* parent) {
     setAcceptDrops(true);
     this->setStyleSheet("QPlainTextEdit { background-color: #141520; color: #cccccc; }");
     this->setTabStopDistance(32);
@@ -116,7 +115,7 @@ TEditor::TEditor(QWidget* parent) {
     editorDocument->setDefaultTextOption(option);
 
 
-    highlighter = new THighlighter(editorDocument);
+    highlighter = new TSyntaxHighlighter(editorDocument);
     autoComplete = new AutoComplete(this, parent);
     lineNumberArea = new LineNumberArea(this);
 
@@ -133,11 +132,18 @@ TEditor::TEditor(QWidget* parent) {
     updateLineNumberAreaWidth();
     highlightCurrentLine();
 
+    // set saved setting font size to the editor
     QSettings settingsVal("Alif", "Taif");
     int savedSize = settingsVal.value("editorFontSize").toInt();
     updateFontSize(savedSize);
+    // set saved setting font type to the editor
     QString savedFont = settingsVal.value("editorFontType").toString();
     updateFontType(savedFont);
+    // set saved setting theme to the editor
+    int savedTheme = settingsVal.value("editorCodeTheme").toInt();
+    savedTheme >= 0 ? savedTheme : savedTheme = 0;
+    std::shared_ptr<SyntaxTheme> theme = setting->getAvailableThemes().at(savedTheme);
+    updateHighlighterTheme(theme);
 
     autoSaveTimer = new QTimer(this);
     autoSaveTimer->setInterval(60000);
@@ -760,4 +766,10 @@ void TEditor::removeBackupFile() {
         QFile::remove(backupPath);
     }
     stopAutoSave();
+}
+
+
+
+void TEditor::updateHighlighterTheme(std::shared_ptr<SyntaxTheme> theme) {
+    this->highlighter->setTheme(theme);
 }

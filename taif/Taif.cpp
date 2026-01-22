@@ -115,6 +115,10 @@ Taif::Taif(const QString& filePath, QWidget *parent)
 
     // ===================================================================
 
+    setting = new TSettings();
+
+    // ===================================================================
+
     consoleTabWidget = new QTabWidget(this);
     consoleTabWidget->setObjectName("consoleTabWidget");
     consoleTabWidget->setDocumentMode(true);
@@ -422,6 +426,8 @@ Taif::~Taif() {
         QSettings settings("Alif", "Taif");
         settings.setValue("editorFontSize", editor->font().pixelSize());
         settings.setValue("editorFontType", editor->font().family());
+        settings.setValue("editorCodeTheme", setting->getThemeCombo()->currentIndex());
+        settings.sync();
     }
 }
 
@@ -615,7 +621,7 @@ void Taif::newFile() {
         if (isNeedSave == 1) this->saveFile();
     }
 
-    TEditor *newEditor = new TEditor(this);
+    TEditor *newEditor = new TEditor(setting, this);
     tabWidget->addTab(newEditor, "غير معنون");
     tabWidget->setCurrentWidget(newEditor);
 
@@ -651,7 +657,7 @@ void Taif::openFile(QString filePath) {
             QString content = in.readAll();
             file.close();
 
-            TEditor *newEditor = new TEditor(this);
+            TEditor *newEditor = new TEditor(setting, this);
             connect(newEditor->document(), &QTextDocument::modificationChanged, this, &Taif::onModificationChanged);
             newEditor->setPlainText(content);
             newEditor->setProperty("filePath", filePath);
@@ -697,7 +703,6 @@ void Taif::openFile(QString filePath) {
                 recentFiles.removeLast();
             }
             settings.setValue("RecentFiles", recentFiles);
-
         } else {
             QMessageBox::warning(this, "خطأ", "لا يمكن فتح الملف");
         }
@@ -821,21 +826,27 @@ void Taif::saveFileAs() {
 }
 
 void Taif::openSettings() {
-    if (settings and settings->isVisible()) return;
+    if (setting and setting->isVisible()) return;
 
-    settings = new TSettings(this);
-    connect(settings, &TSettings::fontSizeChanged, this, [this](int size){
+    connect(setting, &TSettings::fontSizeChanged, this, [this](int size){
         for (int i = 0; i < tabWidget->count(); ++i) {
             qobject_cast<TEditor*>(tabWidget->widget(i))->updateFontSize(size);
         }
     });
-    connect(settings, &TSettings::fontTypeChanged, this, [this](QString font){
+    connect(setting, &TSettings::fontTypeChanged, this, [this](QString font){
         for (int i = 0; i < tabWidget->count(); ++i) {
             qobject_cast<TEditor*>(tabWidget->widget(i))->updateFontType(font);
         }
     });
+    connect(setting, &TSettings::highlighterThemeChanged, this, [this](int themeIdx){
+        QVector<std::shared_ptr<SyntaxTheme>> availableThemes = setting->getAvailableThemes();
+        std::shared_ptr<SyntaxTheme> theme = availableThemes.at(themeIdx);
+        for (int i = 0; i < tabWidget->count(); ++i) {
+            qobject_cast<TEditor*>(tabWidget->widget(i))->updateHighlighterTheme(theme);
+        }
+    });
 
-    settings->show();
+    setting->show();
 }
 
 
