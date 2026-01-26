@@ -6,4 +6,5 @@
     <Publisher>Taif</Publisher>
     <StartMenuDir>Taif</StartMenuDir>
     <TargetDir>@ApplicationsDir@/Taif</TargetDir>
+    <WizardStyle>Windows</WizardStyle>
 </Installer>
