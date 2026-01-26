@@ -1,6 +1,5 @@
 #include "TSettings.h"
 
-
 TSettings::TSettings(QWidget* parent) : QWidget(parent) {
     setWindowTitle("الإعدادات");
     setWindowFlags(Qt::Window | Qt::WindowCloseButtonHint);
@@ -45,6 +44,9 @@ TSettings::TSettings(QWidget* parent) : QWidget(parent) {
 void TSettings::closeEvent(QCloseEvent* event) {
     QSettings settings("Alif", "Taif");
     settings.setValue("editorFontSize", fontSpin->value());
+    settings.setValue("editorFontType", fontCombo->currentText());
+    settings.setValue("editorCodeTheme", themeCombo->currentIndex());
+    settings.sync();
 
     // emit windowClosed();
     // event->accept();
@@ -100,7 +102,8 @@ void TSettings::createCategory(const QString& name, const QString& description) 
 }
 
 void TSettings::createAppearancePage(QVBoxLayout* layout) {
-    // Font selection
+
+    // ================== Font selection ==================
     QGroupBox* fontGroup = new QGroupBox("الخط");
     fontGroup->setStyleSheet("QGroupBox { border: 1px solid gray; border-radius: 6px; margin-top: 2.0ex;}"
                              " QGroupBox::title { subcontrol-origin: margin; padding: 0 2px; left: 10px; }");
@@ -115,30 +118,83 @@ void TSettings::createAppearancePage(QVBoxLayout* layout) {
 
     QSettings settingsVal("Alif", "Taif");
     int savedSize = settingsVal.value("editorFontSize").toInt();
-    savedSize ? fontSpin->setValue(savedSize) : fontSpin->setValue(16);
+    savedSize ? fontSpin->setValue(savedSize) : fontSpin->setValue(18);
 
     fontSizeLayout->addRow("حجم الخط: ", fontSpin);
     connect(fontSpin, &QSpinBox::valueChanged, this, &TSettings::fontSizeChanged);
 
 
-    QComboBox* fontCombo = new QComboBox();
+    fontCombo = new QComboBox();
     fontCombo->setEditable(true);
     fontCombo->setInsertPolicy(QComboBox::NoInsert);
     fontCombo->setMinimumHeight(40);
     fontCombo->setMaximumWidth(200);
 
-    QStringList fontFamilies = QFontDatabase::families();
-    fontFamilies.sort(Qt::CaseInsensitive);
+    QStringList fontFamilies{};
+    for (int i = 0; i < 3; i++) {
+        QStringList font = QFontDatabase::applicationFontFamilies(i);
+        fontFamilies.append(font.at(0));
+    }
+
+    // QStringList fontFamilies = QFontDatabase::families();
+    // fontFamilies.sort(Qt::CaseInsensitive);
     // Add fonts to combobox
     foreach (const QString &family, fontFamilies) {
         fontCombo->addItem(family);
     }
-    fontCombo->setCurrentText("Arial");
+    QString savedFont = settingsVal.value("editorFontType").toString();
+    !savedFont.isEmpty() ? fontCombo->setCurrentText(savedFont) : fontCombo->setCurrentText("Noto Kufi Arabic");
 
     fontFamilyLayout->addRow("نوع الخط: ", fontCombo);
+    connect(fontCombo, &QComboBox::currentTextChanged, this, &TSettings::fontTypeChanged);
 
     fontLayout->addLayout(fontSizeLayout);
-    // fontLayout->addLayout(fontFamilyLayout);
+    fontLayout->addLayout(fontFamilyLayout);
+
+    // ================== Themes ==================
+    QGroupBox* themeGroup = new QGroupBox("المظهر");
+    themeGroup->setStyleSheet("QGroupBox { border: 1px solid gray; border-radius: 6px; margin-top: 2.0ex;}"
+                             " QGroupBox::title { subcontrol-origin: margin; padding: 0 2px; left: 10px; }");
+    QVBoxLayout* themeLayout = new QVBoxLayout(themeGroup);
+    QFormLayout* comboLayout = new QFormLayout();
+
+    themeCombo = new QComboBox();
+    themeCombo->setInsertPolicy(QComboBox::NoInsert);
+    themeCombo->setMinimumHeight(40);
+    themeCombo->setMaximumWidth(250);
+
+    setThemes();
+    // Populate UI
+    for (const auto& theme : availableThemes) {
+        themeCombo->addItem(theme->name());
+    }
+
+    int savedTheme = settingsVal.value("editorCodeTheme").toInt();
+    savedTheme ? themeCombo->setCurrentIndex(savedTheme) : themeCombo->setCurrentIndex(0);
+
+    comboLayout->addRow("مظهر الشيفرة: ", themeCombo);
+    connect(themeCombo, &QComboBox::currentIndexChanged, this, &TSettings::highlighterThemeChanged);
+
+    themeLayout->addLayout(comboLayout);
+
+
+
 
     layout->addWidget(fontGroup);
+    layout->addWidget(themeGroup);
+}
+
+QComboBox *TSettings::getThemeCombo() const {
+    return themeCombo;
+}
+
+void TSettings::setThemes() {
+    availableThemes.append(std::make_shared<VSCodeDarkTheme>());
+    availableThemes.append(std::make_shared<MonokaiTheme>());
+    availableThemes.append(std::make_shared<OceanicTheme>());
+    availableThemes.append(std::make_shared<TaifGlowTheme>());
+}
+
+QVector<std::shared_ptr<SyntaxTheme>> TSettings::getAvailableThemes() const {
+    return availableThemes;
 }

@@ -12,6 +12,7 @@ RESOURCES += \
 
 # Include directories
 INCLUDEPATH +=  ../source/texteditor \
+                ../source/texteditor/highlighter \
                 ../source/components \
                 ../source/console \
                 ../source/menubar   \
@@ -19,13 +20,13 @@ INCLUDEPATH +=  ../source/texteditor \
                 ../source/settings  \
 
 SOURCES += \
+    ../source/texteditor/highlighter/TLexer.cpp \
+    ../source/texteditor/highlighter/TSyntaxDefinition.cpp \
+    ../source/texteditor/highlighter/TSyntaxHighlighter.cpp \
     Taif.cpp \
     main.cpp \
-    ../source/texteditor/SyntaxDefinition.cpp \
     ../source/texteditor/AlifComplete.cpp \
-    ../source/texteditor/AlifLexer.cpp \
     ../source/texteditor/TEditor.cpp \
-    ../source/texteditor/THighlighter.cpp \
     ../source/components/TFlatButton.cpp \
     ../source/components/TSearchPanel.cpp \
     ../source/console/TConsole.cpp \
@@ -35,12 +36,14 @@ SOURCES += \
     ../source/settings/TSettings.cpp   \
 
 HEADERS += \
+    ../source/texteditor/highlighter/TLexer.h \
+    ../source/texteditor/highlighter/TSyntaxDefinition.h \
+    ../source/texteditor/highlighter/TSyntaxHighlighter.h \
+    ../source/texteditor/highlighter/TSyntaxThemes.h \
+    ../source/texteditor/highlighter/TToken.h \
     Taif.h  \
-    ../source/texteditor/SyntaxDefinition.h \
     ../source/texteditor/AlifComplete.h \
-    ../source/texteditor/AlifLexer.h \
     ../source/texteditor/TEditor.h \
-    ../source/texteditor/THighlighter.h \
     ../source/components/TFlatButton.h \
     ../source/components/TSearchPanel.h \
     ../source/console/TConsole.h \
